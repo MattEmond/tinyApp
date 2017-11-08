@@ -1,0 +1,49 @@
+<!-- views/urls_index.ejs -->
+
+<!-- This is used on /urls/ which will show all our URLs in their shortened forms -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>tinyApp</title>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <style>
+    body {
+      padding-top: 20px;
+      padding-bottom: 20px
+    }
+
+    .jumbotron {
+      margin-top: 10px
+    }
+  </style>
+</head>
+<body>
+<header>
+    <% include partials/_header %>
+</header>
+
+
+  <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="list-group">
+            <!-- loop over urls -->
+            <% for (key in urls) { %>
+              <!-- %= means html escaped.  Will print out in html -->
+              <!-- below is a list of the URLs and their shortened forms -->
+              <p>
+                <form method="POST" action="/urls/<%= key %>/delete">
+                <%= key %> -----> <%= urls[key].longURL %>  <a href="/urls/<%= key%>"> EDIT </a>
+                <!-- Delete button -->
+                <button name="button"> Delete </button>
+              </form>
+              </p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+</html>

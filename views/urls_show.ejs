@@ -1,0 +1,30 @@
+<!-- views/urls.show.ejs -->
+
+<!-- page to show the full URL and its shortened form -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+</head>
+<body>
+  <header>
+    <% include partials/_header %>
+</header>
+
+<div class="container">
+    <div class="jumbotron">
+      <h2>Site Shortened!</h2>
+      <!-- This is code to show the URL in its shortened form -->
+      <p class="lead"> Here is your unique short code -----  <%= shortURL %> </p>
+      <p><a href="<%=longURL%>">Click Here To Visit <%= longURL %> </a></p>
+      <!-- line 23-24 will take in an existing longURL and update it -->
+      <form method="POST" action="/urls/<%= shortURL %>">
+        <input type="submit" value="Submit">
+        <input id="longURL" type="text" name="longURL" value="http://" style="width: 300px">
+      </form>
+    </div>
+  </div>
+</body>
+</html>

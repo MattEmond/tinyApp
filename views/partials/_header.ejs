@@ -1,0 +1,24 @@
+<!-- views/partials/_header.ejs -->
+
+<!-- header to be used on all pages -->
+
+<div>
+  <div class="container">
+    <div class="jumbotron">
+      <h1>Welcome to tinyApp</h1>
+    </div>
+  <% if (!username) { %>
+    <form action="/login" method="POST" style="margin:150px">
+       Please Enter your Username
+      <input type="text" name="username">
+      <button name="button">LOG IN</button>
+    <%} else {%>
+      <form action="/logout" method="POST" style="margin:150px">
+       Hello <%= username%>
+        <button name="button">LOG OUT </button>
+    <% } %>
+  </form>
+</div>
+
+
+
