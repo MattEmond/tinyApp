@@ -23,6 +23,24 @@ const urlDatabase = {
   },
 };
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "hello123"
+  },
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "hello456"
+  },
+  "user3RandomID": {
+    id: "user3RandomID",
+    email: "user3@example.com",
+    password: "hello789"
+  }
+};
+
 
 
 // generate random url id
@@ -33,6 +51,12 @@ function generateRandomString() {
 // page for input of new urls.  Passes URL data to urls_new
 app.get("/urls/new", (request, response) => {
   response.render("urls_new");
+});
+
+// GET route that passes data to urls/login
+// should allow for creation of a new user
+app.get("/urls/register", (request, response) => {
+  response.render("urls_register");
 });
 
 // take in url from the urls/new page and then generate a random ID
@@ -80,11 +104,31 @@ app.post("/urls/:id/delete", (request, response) => {
   response.redirect("/urls");
 });
 
+// registration page
+app.post("/urls/register", (request, response) => {
+  console.log(`Request.params is ${request.params}`);
+  console.log(`Request.body is ${request.body}`); // debug statement to see POST parameters
+  let id = generateRandomString();
+  console.log(`ID is : ${id}`)
+  let user =
+       {
+      id: id,
+      email: request.params.email,
+      password: request.params.password,
+    }
+    users[id] = user
+
+  // once we register the user, we get redirected to a new page with the info
+  response.cookie("userID", id);
+  response.redirect("/urls");
+});
+
 // POST route to update a URL resource
 app.post("/urls/:id", (request, response) => {
   console.log(request.body);
   let id = request.params.id;
   let longURL = request.body.longURL;
+  console.log(`Request Params ID: ${request.params.id}`)
   urlDatabase[request.params.id].longURL = longURL;
   console.log(longURL);
   response.redirect("/urls");
@@ -104,6 +148,13 @@ app.post("/logout", (request, response) => {
   response.clearCookie("userID", request.body.username);
   response.redirect("/urls");
 });
+
+
+
+
+
+
+
 
 // gives me a JSON output of my main page.
 // app.get("/urls.json", (request, response) => {
