@@ -10,16 +10,18 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 const cookieParser = require('cookie-parser');
-app.use(cookieParser())
+app.use(cookieParser());
 
 
 // url database
 const urlDatabase = {
   "b2xVn2": {
-    longURL: "http://lighthouselabs.ca"
+    longURL: "http://lighthouselabs.ca",
+    userID: "b2xVn2"
   },
   "9sm5xk": {
-    longURL: "http://www.google.com"
+    longURL: "http://www.google.com",
+    userID: "9sm5xk"
   },
 };
 
@@ -50,9 +52,11 @@ function generateRandomString() {
 
 // page for input of new urls.  Passes URL data to urls_new
 app.get("/urls/new", (request, response) => {
-  console.log(`Request cookies: ${request.cookies["userID"]}`)
-  let userID = request.cookies["userID"]
-  console.log(users[userID])
+  if (!request.params.user) {
+    response.redirect("/urls/login");
+    return;
+  }
+  let userID = request.cookies["userID"];
   let templateVars = {
       user: users[userID]
   };
@@ -67,28 +71,26 @@ app.get("/urls/register", (request, response) => {
 
 // LOGIN PAGE
 app.get("/urls/login", (request, response) => {
-  let userID = request.cookies["userID"]
+  let userID = request.cookies["userID"];
   let templateVars = {
       user: users[userID]
   };
 
-  response.render("login", templateVars)
+  response.render("login", templateVars);
 });
 
 // registration page
 app.post("/urls/register", (request, response) => {
-  console.log(`Request body email is : ${request.body.email}`)
   if ((!request.body.email) || (!request.body.password)) {
     response.status(400)
-    response.send("Nothing Entered")
+    response.send("Nothing Entered");
     return;
   }
   for (user in users) {
-    console.log(users.userRandomID.email)
     if (users[user].email === request.body.email) {
       response.status(400)
-      response.send("Email already exists")
-      return
+      response.send("Email already exists");
+      return;
     }
   }
 
@@ -111,7 +113,7 @@ app.post("/urls/register", (request, response) => {
 app.post("/urls", (request, response) => {
   console.log(request.body); // debug statement to see POST parameters
   let id = generateRandomString();
-  urlDatabase[id] = request.body
+  urlDatabase[id] = request.body;
   // once we input the new URL, we get redirected to a new page with the info
   response.redirect("/urls/" + id);
 });
@@ -127,7 +129,7 @@ app.get("/u/:shortURL", (request, response) => {
 // passes URL data to the template urls_index.ejs
 // done with res.render
 app.get("/urls", (request, response) => {
-  let userID = request.cookies["userID"]
+  let userID = request.cookies["userID"];
   let templateVars = {
       urls: urlDatabase,
       user: users[userID]
@@ -137,11 +139,12 @@ app.get("/urls", (request, response) => {
 
 // passes URL data to template urls_show.
 app.get("/urls/:id", (request, response) => {
-  let userID = request.cookies["userID"]
+  let userID = request.cookies["userID"];
   let templateVars = {
     user: users[userID],
     shortURL: request.params.id,
-    longURL: urlDatabase[request.params.id].longURL
+    longURL: urlDatabase[request.params.id].longURL,
+    userID : urlDatabase[request.params.id].userID
   };
   response.render("urls_show", templateVars);
 });
@@ -158,19 +161,16 @@ app.post("/urls/:id/delete", (request, response) => {
 
 // POST route to update a URL resource
 app.post("/urls/:id", (request, response) => {
-  console.log(request.body);
   let id = request.params.id;
   let longURL = request.body.longURL;
-  console.log(`Request Params ID: ${request.params.id}`)
   urlDatabase[request.params.id].longURL = longURL;
-  console.log(longURL);
   response.redirect("/urls");
 });
 
 // POST route to handle username cookies
 // request.body.username is refering to the input name in header.ejs
 app.post("/login", (request, response) => {
-    let userID = request.cookies["userID"]
+    let userID = request.cookies["userID"];
     let templateVars = {
       user: users[userID]
   };
