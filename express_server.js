@@ -53,11 +53,8 @@ app.get("/urls/new", (request, response) => {
   console.log(`Request cookies: ${request.cookies["userID"]}`)
   let userID = request.cookies["userID"]
   console.log(users[userID])
-
-
   let templateVars = {
       user: users[userID]
-
   };
   response.render("urls_new", templateVars);
 });
@@ -66,6 +63,16 @@ app.get("/urls/new", (request, response) => {
 // should allow for creation of a new user
 app.get("/urls/register", (request, response) => {
   response.render("urls_register");
+});
+
+// LOGIN PAGE
+app.get("/urls/login", (request, response) => {
+  let userID = request.cookies["userID"]
+  let templateVars = {
+      user: users[userID]
+  };
+
+  response.render("login", templateVars)
 });
 
 // registration page
