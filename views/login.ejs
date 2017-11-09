@@ -1,0 +1,34 @@
+<!-- /views/login.ejs -->
+
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <link rel="stylesheet" href="/style.css">
+  </head>
+
+  <body>
+
+    <h1> Welcome to tinyApp </h1>
+    <h2> Please log in </h2>
+
+    <form method="POST" action="/login">
+      <p>
+        <label>email</label>
+        <input type="email" name="email" />
+      </p>
+      <p>
+        <label>Password</label>
+        <input type="password" name="password" />
+      </p>
+      <p>
+        <input type="submit" name="Login" value="Login"/>
+      </p>
+    </form>
+
+    <p>
+      Don't have an account? <a href="/register"> Register Here </a>
+    </p>
+
+  </body>
+</html>

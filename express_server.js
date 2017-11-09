@@ -50,8 +50,14 @@ function generateRandomString() {
 
 // page for input of new urls.  Passes URL data to urls_new
 app.get("/urls/new", (request, response) => {
+  console.log(`Request cookies: ${request.cookies["userID"]}`)
+  let userID = request.cookies["userID"]
+  console.log(users[userID])
+
+
   let templateVars = {
-      username: request.cookies["userID"]
+      user: users[userID]
+
   };
   response.render("urls_new", templateVars);
 });
@@ -90,7 +96,7 @@ app.post("/urls/register", (request, response) => {
 
 
   // once we register the user, we get redirected to a new page with the info
-  response.cookie("userID", id);
+  response.cookie("userID", newUserID);
   response.redirect("/urls");
 });
 
@@ -114,17 +120,19 @@ app.get("/u/:shortURL", (request, response) => {
 // passes URL data to the template urls_index.ejs
 // done with res.render
 app.get("/urls", (request, response) => {
+  let userID = request.cookies["userID"]
   let templateVars = {
       urls: urlDatabase,
-      username: request.cookies["userID"]
+      user: users[userID]
   };
   response.render("urls_index", templateVars);
 });
 
 // passes URL data to template urls_show.
 app.get("/urls/:id", (request, response) => {
+  let userID = request.cookies["userID"]
   let templateVars = {
-    username: request.cookies["userID"],
+    user: users[userID],
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id].longURL
   };
@@ -166,10 +174,6 @@ app.post("/logout", (request, response) => {
   response.clearCookie("userID", request.body.username);
   response.redirect("/urls");
 });
-
-
-
-
 
 
 

@@ -9,14 +9,14 @@
 
 
 
-  <% if (!username) { %>
+  <% if (!user) { %>
     <form action="/login" method="POST" style="margin:150px">
        Please Enter your Username
       <input type="text" name="username">
       <button name="button">LOG IN</button>
     <%} else {%>
       <form action="/logout" method="POST" style="margin:150px">
-       Hello <%= username %>
+       Hello <%= user.email %>
         <button name="button">LOG OUT </button>
     <% } %>
   </form>
