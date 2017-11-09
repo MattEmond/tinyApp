@@ -170,17 +170,34 @@ app.post("/urls/:id", (request, response) => {
 // POST route to handle username cookies
 // request.body.username is refering to the input name in header.ejs
 app.post("/login", (request, response) => {
-  console.log(request.body);
-  response.cookie("userID", request.body.username);
-  response.redirect("/urls");
+    let userID = request.cookies["userID"]
+    let templateVars = {
+      user: users[userID]
+  };
+
+if (request.body.user === ""){
+    response.cookie("userID", "");
+    response.redirect("/urls");
+    return;
+  }
+
+  for(user in users){
+    if (users[user].email === request.body.email && users[user].password === request.body.password){
+      response.cookie("userID", user);
+      response.redirect("/urls");
+      return;
+    }
+  }
+  response.status(403)
+  response.send("login failed.");
 });
 
 // POST route to handle username logout
 app.post("/logout", (request, response) => {
-  console.log(request.body);
-  response.clearCookie("userID", request.body.username);
-  response.redirect("/urls");
-});
+  let userID = request.cookies["userID"]
+  let templateVars = {
+      user: users[userID]
+  };
 
 
 
