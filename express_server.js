@@ -50,13 +50,48 @@ function generateRandomString() {
 
 // page for input of new urls.  Passes URL data to urls_new
 app.get("/urls/new", (request, response) => {
-  response.render("urls_new");
+  let templateVars = {
+      username: request.cookies["userID"]
+  };
+  response.render("urls_new", templateVars);
 });
 
 // GET route that passes data to urls/login
 // should allow for creation of a new user
 app.get("/urls/register", (request, response) => {
   response.render("urls_register");
+});
+
+// registration page
+app.post("/urls/register", (request, response) => {
+  console.log(`Request body email is : ${request.body.email}`)
+  if ((!request.body.email) || (!request.body.password)) {
+    response.status(400)
+    response.send("Nothing Entered")
+    return;
+  }
+  for (user in users) {
+    console.log(users.userRandomID.email)
+    if (users[user].email === request.body.email) {
+      response.status(400)
+      response.send("Email already exists")
+      return
+    }
+  }
+
+  let newUserID = generateRandomString();
+
+  users[newUserID] = {
+    id: newUserID,
+    email: request.body.email,
+    password: request.body.password,
+    };
+
+
+
+  // once we register the user, we get redirected to a new page with the info
+  response.cookie("userID", id);
+  response.redirect("/urls");
 });
 
 // take in url from the urls/new page and then generate a random ID
@@ -104,24 +139,7 @@ app.post("/urls/:id/delete", (request, response) => {
   response.redirect("/urls");
 });
 
-// registration page
-app.post("/urls/register", (request, response) => {
-  console.log(`Request.params is ${request.params}`);
-  console.log(`Request.body is ${request.body}`); // debug statement to see POST parameters
-  let id = generateRandomString();
-  console.log(`ID is : ${id}`)
-  let user =
-       {
-      id: id,
-      email: request.params.email,
-      password: request.params.password,
-    }
-    users[id] = user
 
-  // once we register the user, we get redirected to a new page with the info
-  response.cookie("userID", id);
-  response.redirect("/urls");
-});
 
 // POST route to update a URL resource
 app.post("/urls/:id", (request, response) => {
