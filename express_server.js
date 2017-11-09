@@ -194,10 +194,9 @@ if (request.body.user === ""){
 
 // POST route to handle username logout
 app.post("/logout", (request, response) => {
-  let userID = request.cookies["userID"]
-  let templateVars = {
-      user: users[userID]
-  };
+  response.clearCookie("userID");
+  response.redirect("/urls");
+})
 
 
 

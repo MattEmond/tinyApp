@@ -13,6 +13,10 @@
   </form>
   <form action="/login" method="POST">
     <a href="/urls/login"> Log in Here </a>
+    <%} else {%>
+      <form action="/logout" method="POST">
+       Hello <%= user.email %>
+        <button name="button">LOG OUT </button>
      <% } %>
   </form>
   </div>
