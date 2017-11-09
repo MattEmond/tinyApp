@@ -13,36 +13,28 @@
 <header>
     <% include partials/_header %>
 </header>
-
-
   <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="list-group">
-            <!-- loop over urls -->
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="list-group">
+          <!-- loop over urls -->
 
-              <!-- %= means html escaped.  Will print out in html -->
-              <!-- below is a list of the URLs and their shortened forms -->
-             <% if (!user) { %>
-  <h1> PLEASE LOG IN OR REGISTER</h1>
-  <form action="/login" method="POST">
-    <a href="/urls/login"> Log in Here </a>
-    <%} else {%>
-         <% for (key in urls) { %>
-         <p>
-      <form method="POST" action="/urls/<%= key %>/delete">
-        http://localhost:8080/urls/<%= key %> -----> <%= urls[key].longURL %>  <a href="/urls/<%= key%>"> EDIT </a>
-        <!-- Delete button -->
-         <button name="button"> Delete </button>
-       </p>
-     <% } %>
-     <%}%>
+          <% for (key in urls) { %>
+          <!-- %= means html escaped.  Will print out in html -->
+          <!-- below is a list of the URLs and their shortened forms -->
 
+          <p>
+           <form method="POST" action="/urls/<%= key %>/delete">
+            http://localhost:8080/urls/<%= key %> -----> <%= urls[key].longURL %>  <a href="/urls/<%= key%>"> EDIT </a>
+            <!-- Delete button -->
+            <button name="button"> Delete </button>
+          </p>
 
-          </div>
+        <% } %>
         </div>
       </div>
     </div>
+  </div>
 </body>
 </html>
 

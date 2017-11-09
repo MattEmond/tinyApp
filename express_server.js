@@ -17,11 +17,11 @@ app.use(cookieParser());
 const urlDatabase = {
   "b2xVn2": {
     longURL: "http://lighthouselabs.ca",
-    userID: "b2xVn2"
+    userID: ""
   },
   "9sm5xk": {
     longURL: "http://www.google.com",
-    userID: "9sm5xk"
+    userID: ""
   },
 };
 
@@ -52,7 +52,7 @@ function generateRandomString() {
 
 // page for input of new urls.  Passes URL data to urls_new
 app.get("/urls/new", (request, response) => {
-  if (!request.params.user) {
+  if (!request.cookies["userID"]) {
     response.redirect("/urls/login");
     return;
   }
@@ -82,7 +82,7 @@ app.get("/urls/login", (request, response) => {
 // registration page
 app.post("/urls/register", (request, response) => {
   if ((!request.body.email) || (!request.body.password)) {
-    response.status(400)
+    response.status(400);
     response.send("Nothing Entered");
     return;
   }
@@ -93,7 +93,6 @@ app.post("/urls/register", (request, response) => {
       return;
     }
   }
-
   let newUserID = generateRandomString();
 
   users[newUserID] = {
@@ -114,6 +113,7 @@ app.post("/urls", (request, response) => {
   console.log(request.body); // debug statement to see POST parameters
   let id = generateRandomString();
   urlDatabase[id] = request.body;
+  urlDatabase[id].userID = request.cookies["userID"];
   // once we input the new URL, we get redirected to a new page with the info
   response.redirect("/urls/" + id);
 });
@@ -152,15 +152,25 @@ app.get("/urls/:id", (request, response) => {
 // POST route to remove a URL resource
 // id always needs to be passed as request.params.id
 app.post("/urls/:id/delete", (request, response) => {
+  if (request.cookies["userID"] !== urlDatabase[request.params.id].userID) {
+    response.status(403)
+    response.send("HAL 9000: I'm sorry Dave, I'm afraid I can't do that");
+    return;
+  }
   let id = request.params.id;
   delete urlDatabase[id];
   response.redirect("/urls");
-});
+})
 
 
 
 // POST route to update a URL resource
 app.post("/urls/:id", (request, response) => {
+  if (request.cookies["userID"] !== urlDatabase[request.params.id].userID) {
+    response.status(403)
+    response.send("HAL 9000: I'm sorry Dave, I'm afraid I can't do that");
+    return;
+  }
   let id = request.params.id;
   let longURL = request.body.longURL;
   urlDatabase[request.params.id].longURL = longURL;
@@ -189,7 +199,7 @@ if (request.body.user === ""){
     }
   }
   response.status(403)
-  response.send("login failed.");
+  response.send("Login Failed. Please register an account");
 });
 
 // POST route to handle username logout
