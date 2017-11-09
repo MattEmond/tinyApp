@@ -18,18 +18,15 @@
       <div class="col-lg-12">
         <div class="list-group">
           <!-- loop over urls -->
-
           <% for (key in urls) { %>
           <!-- %= means html escaped.  Will print out in html -->
           <!-- below is a list of the URLs and their shortened forms -->
-
           <p>
            <form method="POST" action="/urls/<%= key %>/delete">
             http://localhost:8080/urls/<%= key %> -----> <%= urls[key].longURL %>  <a href="/urls/<%= key%>"> EDIT </a>
             <!-- Delete button -->
             <button name="button"> Delete </button>
           </p>
-
         <% } %>
         </div>
       </div>
