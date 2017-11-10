@@ -9,8 +9,11 @@ const PORT = process.env.PORT || 8080; // default is 8080
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
+const cookieSession = require('cookie-session');
+app.use(cookieSession( {
+  name: 'session',
+  secret: ["october-delta-elephant"]
+}));
 
 const bcrypt = require('bcrypt');
 
@@ -65,7 +68,7 @@ function urlsForUser(userID) {
 
 // page for input of new urls.  Passes URL data to urls_new
 app.get("/urls/new", (request, response) => {
-  if (!request.cookies["userID"]) {
+  if (!request.session["userID"]) {
     response.redirect("/urls/login");
     return;
   }
@@ -84,7 +87,7 @@ app.get("/urls/register", (request, response) => {
 
 // LOGIN PAGE
 app.get("/urls/login", (request, response) => {
-  let userID = request.cookies["userID"];
+  let userID = request.session["userID"];
   let templateVars = {
       user: users[userID]
   };
@@ -115,7 +118,7 @@ app.post("/urls/register", (request, response) => {
     password: hashedPassword
     };
   // once we register the user, we get redirected to a new page with the info
-  response.cookie("userID", newUserID);
+  request.session["userID"] = newUserID;
   response.redirect("/urls");
 });
 
@@ -124,7 +127,7 @@ app.post("/urls", (request, response) => {
  // console.log(request.body); // debug statement to see POST parameters
   let id = generateRandomString();
   urlDatabase[id] = request.body;
-  urlDatabase[id].userID = request.cookies["userID"];
+  urlDatabase[id].userID = request.session["userID"];
   // once we input the new URL, we get redirected to a new page with the info
   response.redirect("/urls/" + id);
 });
@@ -140,7 +143,7 @@ app.get("/u/:shortURL", (request, response) => {
 // passes URL data to the template urls_index.ejs
 // done with res.render
 app.get("/urls", (request, response) => {
-  let userID = request.cookies["userID"];
+  let userID = request.session["userID"];
     console.log(urlsForUser(userID))
   let templateVars = {
       urls: urlsForUser(userID),
@@ -164,7 +167,7 @@ app.get("/urls/:id", (request, response) => {
 // POST route to remove a URL resource
 // id always needs to be passed as request.params.id
 app.post("/urls/:id/delete", (request, response) => {
-  if (request.cookies["userID"] !== urlDatabase[request.params.id].userID) {
+  if (request.session["userID"] !== urlDatabase[request.params.id].userID) {
     response.status(403)
     response.send("HAL 9000: I'm sorry Dave, I'm afraid I can't do that");
     return;
@@ -178,7 +181,7 @@ app.post("/urls/:id/delete", (request, response) => {
 
 // POST route to update a URL resource
 app.post("/urls/:id", (request, response) => {
-  if (request.cookies["userID"] !== urlDatabase[request.params.id].userID) {
+  if (request.session["userID"] !== urlDatabase[request.params.id].userID) {
     response.status(403)
     response.send("HAL 9000: I'm sorry Dave, I'm afraid I can't do that");
     return;
@@ -192,7 +195,7 @@ app.post("/urls/:id", (request, response) => {
 // POST route to handle username cookies
 // request.body.username is refering to the input name in header.ejs
 app.post("/login", (request, response) => {
-    let userID = request.cookies["userID"];
+    let userID = request.session["userID"];
     let templateVars = {
       user: users[userID]
   };
