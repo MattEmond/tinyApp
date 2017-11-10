@@ -15,7 +15,7 @@
     <a href="/urls/login"> Log in Here </a>
     <%} else {%>
       <form action="/logout" method="POST">
-       Hello <%= user.email %>
+       Hello <%= user %>
         <button name="button">LOG OUT </button>
      <% } %>
   </form>

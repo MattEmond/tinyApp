@@ -65,6 +65,19 @@ function urlsForUser(userID) {
   return usersUrls;
 }
 
+function currentUser(userID) {
+  // let userID = request.session["userID"]
+  let currentUser = null
+    Object.keys(users).forEach(function(email) {
+      if (users[email].id === userID) {
+        currentUser = email;
+        }
+
+      });
+        return currentUser;
+    };
+
+
 
 // page for input of new urls.  Passes URL data to urls_new
 app.get("/urls/new", (request, response) => {
@@ -72,9 +85,10 @@ app.get("/urls/new", (request, response) => {
     response.redirect("/urls/login");
     return;
   }
+
   let userID = request.session["userID"];
   let templateVars = {
-      user: users[userID]
+      user: currentUser(userID)
   };
   response.render("urls_new", templateVars);
 });
@@ -112,14 +126,14 @@ app.post("/urls/register", (request, response) => {
   let newUserID = generateRandomString();
   const hashedPassword = bcrypt.hashSync(request.body.password, 10);
 
-  users[newUserID] = {
+  users[request.body.email] = {
     id: newUserID,
     email: request.body.email,
     password: hashedPassword
     };
   // once we register the user, we get redirected to a new page with the info
-  request.session["userID"] = newUserID;
-  response.redirect("/urls");
+  // request.session["userID"] = newUserID;
+  response.redirect("/urls/login");
 });
 
 // take in url from the urls/new page and then generate a random ID
@@ -144,11 +158,12 @@ app.get("/u/:shortURL", (request, response) => {
 // done with res.render
 app.get("/urls", (request, response) => {
   let userID = request.session["userID"];
-    console.log(urlsForUser(userID))
+
+
   let templateVars = {
       urls: urlsForUser(userID),
-      user: users[userID]
-  };
+      user: currentUser(userID)
+  }
   response.render("urls_index", templateVars);
 });
 
@@ -156,7 +171,7 @@ app.get("/urls", (request, response) => {
 app.get("/urls/:id", (request, response) => {
   let userID = request.session["userID"];
   let templateVars = {
-    user: users[userID],
+    user: currentUser(userID),
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id].longURL,
     userID : urlDatabase[request.params.id].userID
@@ -196,9 +211,8 @@ app.post("/urls/:id", (request, response) => {
 // request.body.username is refering to the input name in header.ejs
 app.post("/login", (request, response) => {
    const hashedPassword = bcrypt.hashSync(request.body.password, 10);
-    let userID = request.session["userID"];
     let templateVars = {
-      user: users[userID]
+      user: users[request.body.email]
   };
 
 if (request.body.user === ""){
@@ -208,8 +222,8 @@ if (request.body.user === ""){
   }
 
   for(user in users){
-    if (users[user].email === request.body.email && users[user].password === request.body.password) {
-      response.session("userID", user);
+    if (users[user].email === request.body.email && bcrypt.compareSync(request.body.password, users[user].password)) {
+      request.session.userID = users[request.body.email].id
       response.redirect("/urls");
       console.log(`users DB is : ${users}`)
       return;
