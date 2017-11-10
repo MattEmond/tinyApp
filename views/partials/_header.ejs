@@ -6,21 +6,19 @@
   <div class="container">
     <div class="jumbotron">
       <h1>Welcome to tinyApp</h1>
-
-    <% if (!user) { %>
-    <form action="/register" method="POST">
-    <a href="/urls/register"> Register Here </a>
-  </form>
-  <form action="/login" method="POST">
-    <a href="/urls/login"> Log in Here </a>
-    <%} else {%>
-      <form action="/logout" method="POST">
-       Hello <%= user %>
+      <% if (!user) { %>
+       <form action="/register" method="POST">
+        <a href="/urls/register"> Register Here </a>
+      </form>
+      <form action="/login" method="POST">
+        <a href="/urls/login"> Log in Here </a>
+        <%} else {%>
+        <form action="/logout" method="POST">
+        Hello <%= user %>
         <button name="button">LOG OUT </button>
-     <% } %>
-  </form>
-
-</div>
+       <% } %>
+      </form>
+    </div>
   </div>
 </div>
 

@@ -31,21 +31,7 @@ const urlDatabase = {
 };
 
 const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  },
-  "user3RandomID": {
-    id: "user3RandomID",
-    email: "user3@example.com",
-    password: "lighthouse-labs"
-  }
+
 };
 
 // generate random url id
@@ -65,18 +51,16 @@ function urlsForUser(userID) {
   return usersUrls;
 }
 
+
 function currentUser(userID) {
-  // let userID = request.session["userID"]
   let currentUser = null
-    Object.keys(users).forEach(function(email) {
-      if (users[email].id === userID) {
-        currentUser = email;
-        }
-
-      });
-        return currentUser;
-    };
-
+  Object.keys(users).forEach(function(email) {
+    if (users[email].id === userID) {
+      currentUser = email;
+    }
+  });
+  return currentUser;
+};
 
 
 // page for input of new urls.  Passes URL data to urls_new
@@ -84,11 +68,11 @@ app.get("/urls/new", (request, response) => {
   if (!request.session["userID"]) {
     response.redirect("/urls/login");
     return;
-  }
+}
 
   let userID = request.session["userID"];
   let templateVars = {
-      user: currentUser(userID)
+    user: currentUser(userID)
   };
   response.render("urls_new", templateVars);
 });
@@ -158,8 +142,6 @@ app.get("/u/:shortURL", (request, response) => {
 // done with res.render
 app.get("/urls", (request, response) => {
   let userID = request.session["userID"];
-
-
   let templateVars = {
       urls: urlsForUser(userID),
       user: currentUser(userID)
@@ -225,7 +207,6 @@ if (request.body.user === ""){
     if (users[user].email === request.body.email && bcrypt.compareSync(request.body.password, users[user].password)) {
       request.session.userID = users[request.body.email].id
       response.redirect("/urls");
-      console.log(`users DB is : ${users}`)
       return;
     }
   }
@@ -238,8 +219,6 @@ app.post("/logout", (request, response) => {
   request.session = null
   response.redirect("/urls");
 })
-
-
 
 
 // gives me a JSON output of my main page.

@@ -9,22 +9,22 @@
   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 </head>
 <body>
-  <header>
-    <% include partials/_header %>
+<header>
+  <% include partials/_header %>
 </header>
-
 <div class="container">
-    <div class="jumbotron">
-      <a href="/urls"> Homepage </a>
-      <h2>Site Shortened!</h2>
-      <!-- This is code to show the URL in its shortened form -->
-      <p class="lead"> Here is your unique short code -----  <%= shortURL %> </p>
-      <p><a href="<%=longURL%>">Click Here To Visit <%= longURL %> </a></p>
-      <!-- line 23-24 will take in an existing longURL and update it -->
-      <form method="POST" action="/urls/<%= shortURL %>">
-        <input type="submit" value="Submit">
-        <input id="longURL" type="text" name="longURL" value="http://" style="width: 300px">
-      </form>
+  <div class="jumbotron">
+    <a href="/urls"> Homepage </a>
+    <h2>Site Shortened!</h2>
+    <!-- This is code to show the URL in its shortened form -->
+    <p class="lead"> Here is your unique short URL -----  http://localhost:8080/urls/<%= shortURL %> </p>
+    <p><a href="<%=longURL%>">Click Here To Visit <%= longURL %> </a></p>
+    <!-- line 23-24 will take in an existing longURL and update it -->
+    Update URL:
+    <form method="POST" action="/urls/<%= shortURL %>">
+      <input type="submit" value="Submit">
+      <input id="longURL" type="text" name="longURL" value="http://" style="width: 300px">
+    </form>
     </div>
   </div>
 </body>
