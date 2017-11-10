@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 const cookieSession = require('cookie-session');
 app.use(cookieSession( {
   name: 'session',
-  secret: ["october-delta-elephant"]
+  keys: ["october-delta-elephant"]
 }));
 
 const bcrypt = require('bcrypt');
@@ -220,7 +220,7 @@ if (request.body.user === ""){
 
 // POST route to handle username logout
 app.post("/logout", (request, response) => {
-  response.clearCookie("userID");
+  request.session = null
   response.redirect("/urls");
 })
 
