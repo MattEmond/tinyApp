@@ -72,7 +72,7 @@ app.get("/urls/new", (request, response) => {
     response.redirect("/urls/login");
     return;
   }
-  let userID = request.cookies["userID"];
+  let userID = request.session["userID"];
   let templateVars = {
       user: users[userID]
   };
@@ -154,7 +154,7 @@ app.get("/urls", (request, response) => {
 
 // passes URL data to template urls_show.
 app.get("/urls/:id", (request, response) => {
-  let userID = request.cookies["userID"];
+  let userID = request.session["userID"];
   let templateVars = {
     user: users[userID],
     shortURL: request.params.id,
@@ -195,20 +195,21 @@ app.post("/urls/:id", (request, response) => {
 // POST route to handle username cookies
 // request.body.username is refering to the input name in header.ejs
 app.post("/login", (request, response) => {
+   const hashedPassword = bcrypt.hashSync(request.body.password, 10);
     let userID = request.session["userID"];
     let templateVars = {
       user: users[userID]
   };
 
 if (request.body.user === ""){
-    response.cookie("userID", "");
+    response.session("userID", "");
     response.redirect("/urls");
     return;
   }
 
   for(user in users){
-    if (users[user].email === request.body.email && bcrypt.compareSync(request.body.password, users[user].password)) {
-      response.cookie("userID", user);
+    if (users[user].email === request.body.email && users[user].password === request.body.password) {
+      response.session("userID", user);
       response.redirect("/urls");
       console.log(`users DB is : ${users}`)
       return;
@@ -228,9 +229,10 @@ app.post("/logout", (request, response) => {
 
 
 // gives me a JSON output of my main page.
-// app.get("/urls.json", (request, response) => {
-//   response.json(urlDatabase);
-// });
+app.get("/urls.json", (request, response) => {
+  response.json(urlDatabase);
+  response.json(users)
+});
 
 // sends a Hello World message when I redirect to /hello.
 // app.get("/hello", (request, response) => {
