@@ -12,6 +12,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+const bcrypt = require('bcrypt');
+
 
 // url database
 const urlDatabase = {
@@ -29,17 +31,17 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "hello123"
+    password: "purple-monkey-dinosaur"
   },
   "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "hello456"
+    password: "dishwasher-funk"
   },
   "user3RandomID": {
     id: "user3RandomID",
     email: "user3@example.com",
-    password: "hello789"
+    password: "lighthouse-labs"
   }
 };
 
@@ -105,15 +107,13 @@ app.post("/urls/register", (request, response) => {
     }
   }
   let newUserID = generateRandomString();
+  const hashedPassword = bcrypt.hashSync(request.body.password, 10);
 
   users[newUserID] = {
     id: newUserID,
     email: request.body.email,
-    password: request.body.password,
+    password: hashedPassword
     };
-
-
-
   // once we register the user, we get redirected to a new page with the info
   response.cookie("userID", newUserID);
   response.redirect("/urls");
@@ -204,9 +204,10 @@ if (request.body.user === ""){
   }
 
   for(user in users){
-    if (users[user].email === request.body.email && users[user].password === request.body.password){
+    if (users[user].email === request.body.email && bcrypt.compareSync(request.body.password, users[user].password)) {
       response.cookie("userID", user);
       response.redirect("/urls");
+      console.log(`users DB is : ${users}`)
       return;
     }
   }
