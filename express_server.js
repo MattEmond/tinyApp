@@ -43,12 +43,23 @@ const users = {
   }
 };
 
-
-
 // generate random url id
 function generateRandomString() {
   return Math.random().toString(36).substr(2, 6);
 }
+
+
+// returns the subset of the URL database that belongs to the user with ID id
+function urlsForUser(userID) {
+  let usersUrls = {};
+  for (urlID in urlDatabase) {
+    if (userID === urlDatabase[urlID].userID) {
+      usersUrls[urlID] = urlDatabase[urlID];
+    }
+  }
+  return usersUrls;
+}
+
 
 // page for input of new urls.  Passes URL data to urls_new
 app.get("/urls/new", (request, response) => {
@@ -110,7 +121,7 @@ app.post("/urls/register", (request, response) => {
 
 // take in url from the urls/new page and then generate a random ID
 app.post("/urls", (request, response) => {
-  console.log(request.body); // debug statement to see POST parameters
+ // console.log(request.body); // debug statement to see POST parameters
   let id = generateRandomString();
   urlDatabase[id] = request.body;
   urlDatabase[id].userID = request.cookies["userID"];
@@ -130,8 +141,9 @@ app.get("/u/:shortURL", (request, response) => {
 // done with res.render
 app.get("/urls", (request, response) => {
   let userID = request.cookies["userID"];
+    console.log(urlsForUser(userID))
   let templateVars = {
-      urls: urlDatabase,
+      urls: urlsForUser(userID),
       user: users[userID]
   };
   response.render("urls_index", templateVars);
