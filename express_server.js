@@ -158,6 +158,11 @@ app.get("/urls/:id", (request, response) => {
     longURL: urlDatabase[request.params.id].longURL,
     userID : urlDatabase[request.params.id].userID
   };
+  if (!request.session["userID"]) {
+    response.redirect("/urls/login");
+    return;
+}
+
   response.render("urls_show", templateVars);
 });
 
